@@ -1,0 +1,2043 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Documentation",
+        "description": "API documentation with Swagger",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/api",
+            "description": "API base"
+        },
+        {
+            "url": "/api",
+            "description": "API Server RRHH"
+        }
+    ],
+    "paths": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registrar nuevo usuario",
+                "description": "Registrar un nuevo usuario.",
+                "operationId": "5d4fa5d5607ed675ba93907e1fc94534",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuario registrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        {
+                                            "properties": {
+                                                "meta": {
+                                                    "properties": {
+                                                        "token": {
+                                                            "type": "string",
+                                                            "example": "abcd1234..."
+                                                        },
+                                                        "token_type": {
+                                                            "type": "string",
+                                                            "example": "Bearer"
+                                                        },
+                                                        "expires_in": {
+                                                            "type": "integer",
+                                                            "example": 10080
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "email": [
+                                                    "El correo ya está registrado."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Autenticar usuario y obtener token",
+                "description": "Autenticar usuario y obtener token.",
+                "operationId": "67d6d0fdd54fba132e1b6f55ca254183",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Inicio de sesión exitoso",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/User"
+                                        },
+                                        {
+                                            "properties": {
+                                                "meta": {
+                                                    "properties": {
+                                                        "token": {
+                                                            "type": "string",
+                                                            "example": "abcd1234..."
+                                                        },
+                                                        "token_type": {
+                                                            "type": "string",
+                                                            "example": "Bearer"
+                                                        },
+                                                        "expires_in": {
+                                                            "type": "integer",
+                                                            "example": 10080
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciales inválidas"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Cerrar sesión y revocar token",
+                "description": "Cerrar sesión (revocar el token actual).",
+                "operationId": "28d48c13fca984400ac8de99f54ee13a",
+                "responses": {
+                    "200": {
+                        "description": "Sesión cerrada correctamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/categorias": {
+            "get": {
+                "tags": [
+                    "Catálogos"
+                ],
+                "summary": "Lista de categorías docentes",
+                "operationId": "9bd4c5d463ba7b15843eebef947ed231",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/docentes-contratados": {
+            "get": {
+                "tags": [
+                    "DocentesContratados"
+                ],
+                "summary": "Lista paginada de docentes contratados",
+                "operationId": "da1ea698ca1c82113c89ac13dd913ffd",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 25
+                        }
+                    },
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Búsqueda sobre DNI, nombre o resolución",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista paginada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/DocenteContratado"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 83
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "DocentesContratados"
+                ],
+                "summary": "Crear docente contratado",
+                "operationId": "storeDocenteContratado",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DocenteContratado"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Docente creado correctamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DocenteContratado"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/docentes-contratados/{id}": {
+            "get": {
+                "tags": [
+                    "DocentesContratados"
+                ],
+                "summary": "Detalle de un docente contratado con sus contratos agrupados por ciclo",
+                "operationId": "showDocenteContratado",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del docente contratado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Docente encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "dni": {
+                                                    "type": "string"
+                                                },
+                                                "nombres": {
+                                                    "type": "string"
+                                                },
+                                                "contratos_por_ciclo": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "ciclo": {
+                                                                "properties": {
+                                                                    "anio": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "semestre": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "contratos": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "$ref": "#/components/schemas/ContratoDocente"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "DocentesContratados"
+                ],
+                "summary": "Actualizar docente contratado",
+                "operationId": "updateDocenteContratado",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DocenteContratado"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Docente actualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DocenteContratado"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "DocentesContratados"
+                ],
+                "summary": "Eliminar docente contratado",
+                "operationId": "deleteDocenteContratado",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Eliminado"
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/docentes-contratados/import": {
+            "post": {
+                "tags": [
+                    "DocentesContratados"
+                ],
+                "summary": "Importar Excel de contratos",
+                "operationId": "importContratosDocentes",
+                "parameters": [
+                    {
+                        "name": "anio",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2025
+                        }
+                    },
+                    {
+                        "name": "semestre",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "I",
+                                "II"
+                            ],
+                            "example": "I"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "Archivo XLSX/XLS/CSV",
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Importación exitosa",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Archivo importado correctamente para 2025-I"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/docentes-nombrados": {
+            "get": {
+                "tags": [
+                    "Docentes Nombrados"
+                ],
+                "summary": "Obtener lista paginada de docentes nombrados (con búsqueda opcional)",
+                "operationId": "a7d718309fb022615c5bba92a1830a96",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 25
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Buscar por DNI, nombres, apellidos o facultad",
+                        "schema": {
+                            "type": "string",
+                            "example": "Gómez"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado paginado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/DocenteNombrado"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Prohibido"
+                    },
+                    "500": {
+                        "description": "Error inesperado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Docentes Nombrados"
+                ],
+                "summary": "Crear docente o importar vía archivo Excel/CSV",
+                "operationId": "e7fa1160862ca254177b831c37667984",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "Archivo .xlsx /.csv con plantilla de docentes",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "dni": {
+                                        "type": "string",
+                                        "example": "12345678"
+                                    },
+                                    "apellido_paterno": {
+                                        "type": "string",
+                                        "example": "García"
+                                    },
+                                    "apellido_materno": {
+                                        "type": "string",
+                                        "example": "Flores"
+                                    },
+                                    "nombres": {
+                                        "type": "string",
+                                        "example": "Ana María"
+                                    },
+                                    "categoria_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "regimen_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "regimen_pensionario_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "facultad_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Importación completada"
+                    },
+                    "201": {
+                        "description": "Docente creado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DocenteNombrado"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Prohibido"
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    },
+                    "500": {
+                        "description": "Error inesperado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/docentes-nombrados/{id}": {
+            "get": {
+                "tags": [
+                    "Docentes Nombrados"
+                ],
+                "summary": "Mostrar un docente nombrado por ID",
+                "operationId": "33f6d0bb8022a80fd85cf99593ff1ccd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 42
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Docente nombrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DocenteNombrado"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "Prohibido"
+                    },
+                    "404": {
+                        "description": "Docente no encontrado"
+                    },
+                    "500": {
+                        "description": "Error inesperado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Docentes Nombrados"
+                ],
+                "summary": "Actualizar un docente nombrado",
+                "operationId": "ba2f5a44360a8cb97723a2fecc49f2ea",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del docente nombrado",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "apellido_paterno": {
+                                        "type": "string",
+                                        "example": "GÓMEZ"
+                                    },
+                                    "apellido_materno": {
+                                        "type": "string",
+                                        "example": "LÓPEZ"
+                                    },
+                                    "nombres": {
+                                        "type": "string",
+                                        "example": "JUAN MANUEL"
+                                    },
+                                    "mayor_grado_academico": {
+                                        "type": "string",
+                                        "example": "Doctor"
+                                    },
+                                    "anio_ingreso_unprg": {
+                                        "type": "integer",
+                                        "example": 2015
+                                    },
+                                    "fecha_nacimiento": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "1980-05-15"
+                                    },
+                                    "direccion": {
+                                        "type": "string",
+                                        "example": "Av. Principal 123"
+                                    },
+                                    "numero_celular": {
+                                        "type": "string",
+                                        "example": "987654321"
+                                    },
+                                    "correo_institucional": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "juan@unprg.edu.pe"
+                                    },
+                                    "categoria_id": {
+                                        "type": "integer",
+                                        "example": 2,
+                                        "nullable": true
+                                    },
+                                    "regimen_id": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "nullable": true
+                                    },
+                                    "regimen_pensionario_id": {
+                                        "type": "integer",
+                                        "example": 3,
+                                        "nullable": true
+                                    },
+                                    "facultad_id": {
+                                        "type": "integer",
+                                        "example": 5,
+                                        "nullable": true
+                                    },
+                                    "historiales": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 9,
+                                                    "nullable": true
+                                                },
+                                                "categoria_id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "regimen_id": {
+                                                    "type": "integer",
+                                                    "example": 1,
+                                                    "nullable": true
+                                                },
+                                                "tipo_resolucion": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "NOMBRAMIENTO",
+                                                        "ASCENSO"
+                                                    ],
+                                                    "example": "ASCENSO"
+                                                },
+                                                "nro_resolucion": {
+                                                    "type": "string",
+                                                    "example": "R N° 123-2024-R"
+                                                },
+                                                "fecha_resolucion": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2024-01-10"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "condiciones": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 3,
+                                                    "nullable": true
+                                                },
+                                                "condicion": {
+                                                    "type": "string",
+                                                    "example": "FALLECIDO(A)"
+                                                },
+                                                "nro_resolucion": {
+                                                    "type": "string",
+                                                    "example": "R N° 1115-2022-R",
+                                                    "nullable": true
+                                                },
+                                                "fecha_resolucion": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "example": "2022-11-02",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "procedencias": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 4,
+                                                    "nullable": true
+                                                },
+                                                "procedencia": {
+                                                    "type": "string",
+                                                    "example": "CONCURSO PUBLICO"
+                                                },
+                                                "nro_resolucion": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "fecha_resolucion": {
+                                                    "type": "string",
+                                                    "format": "date",
+                                                    "nullable": true
+                                                },
+                                                "comentario": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "renacyt": {
+                                        "properties": {
+                                            "nivel_renacyt": {
+                                                "type": "string",
+                                                "example": "III"
+                                            },
+                                            "nro_resolucion": {
+                                                "type": "string",
+                                                "nullable": true
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Docente actualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DocenteNombrado"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/facultades": {
+            "get": {
+                "tags": [
+                    "Catálogos"
+                ],
+                "summary": "Lista completa de facultades",
+                "operationId": "147e82f3c11cc8645b1f393f96fd6b3d",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/grados-titulos": {
+            "get": {
+                "tags": [
+                    "GradosTitulos"
+                ],
+                "summary": "Lista paginada de grados/títulos",
+                "operationId": "597ae4c0ce6a1af002a7300d5ad9f57e",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": 25
+                        }
+                    },
+                    {
+                        "name": "docente_id",
+                        "in": "query",
+                        "description": "Filtra por *cualquier* docente (nombrado o contratado)",
+                        "schema": {
+                            "type": "integer",
+                            "example": 42
+                        }
+                    },
+                    {
+                        "name": "docente_nombrado_id",
+                        "in": "query",
+                        "description": "Filtra sólo por docente nombrado",
+                        "schema": {
+                            "type": "integer",
+                            "example": 42
+                        }
+                    },
+                    {
+                        "name": "docente_contratado_id",
+                        "in": "query",
+                        "description": "Filtra sólo por docente contratado",
+                        "schema": {
+                            "type": "integer",
+                            "example": 42
+                        }
+                    },
+                    {
+                        "name": "docente_tipo",
+                        "in": "query",
+                        "description": "Filtra por tipo de docente (nombrado | contratado)",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "nombrado",
+                                "contratado"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Busca por título, maestría, doctorado, etc.",
+                        "schema": {
+                            "type": "string",
+                            "example": "Doctor"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Colección paginada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/GradoTitulo"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer"
+                                                },
+                                                "last_page": {
+                                                    "type": "integer"
+                                                },
+                                                "per_page": {
+                                                    "type": "integer"
+                                                },
+                                                "total": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "GradosTitulos"
+                ],
+                "summary": "Importar archivo o crear un registro manualmente",
+                "operationId": "df617a0fc93d80215eb1d9e8f2b482ee",
+                "requestBody": {
+                    "description": "Archivo XLSX/XLS/CSV **o** JSON con campos académicos y el ID del docente.",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "Plantilla de importación masiva",
+                                        "type": "file"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "oneOf": [
+                                    {
+                                        "properties": {
+                                            "mayor_grado_academico": {
+                                                "type": "string",
+                                                "example": "Doctor"
+                                            },
+                                            "titulo": {
+                                                "type": "string",
+                                                "example": "Licenciado en Física"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    {
+                                        "properties": {
+                                            "file": {
+                                                "type": "string",
+                                                "format": "binary"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Creado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GradoTitulo"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/grados-titulos/{id}": {
+            "get": {
+                "tags": [
+                    "GradosTitulos"
+                ],
+                "summary": "Detalle de un grado/título",
+                "operationId": "43acc94941e757d479dca31a7c1928f9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 101
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GradoTitulo"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "GradosTitulos"
+                ],
+                "summary": "Actualizar un registro académico",
+                "operationId": "f5eee89161aeff498cf9a730c8991173",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 101
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "mayor_grado_academico": {
+                                        "type": "string",
+                                        "example": "Magíster"
+                                    },
+                                    "maestria": {
+                                        "type": "string",
+                                        "example": "MAES en Docencia"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Actualizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GradoTitulo"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No encontrado"
+                    },
+                    "422": {
+                        "description": "Errores de validación"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/regimenes": {
+            "get": {
+                "tags": [
+                    "Catálogos"
+                ],
+                "summary": "Lista completa de regímenes de dedicación",
+                "operationId": "0df2eba764c1459941df90f7a86015be",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/test": {
+            "get": {
+                "tags": [
+                    "Test"
+                ],
+                "summary": "Get test data",
+                "description": "Returns test data",
+                "operationId": "getTestData",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "API is working!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ImportContratosRequest": {
+                "required": [
+                    "anio",
+                    "semestre",
+                    "file"
+                ],
+                "properties": {
+                    "anio": {
+                        "description": "Datos que exige el endpoint de importación.",
+                        "type": "integer",
+                        "example": 2025
+                    },
+                    "semestre": {
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II"
+                        ],
+                        "example": "I"
+                    },
+                    "file": {
+                        "description": "Archivo XLSX/XLS/CSV",
+                        "type": "string",
+                        "format": "binary"
+                    }
+                },
+                "type": "object"
+            },
+            "IndexDocentesContratadosQuery": {
+                "description": "Parámetros de consulta para listar docentes contratados",
+                "properties": {
+                    "search": {
+                        "description": "Texto a buscar en DNI, nombres, apellidos o resolución",
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "page": {
+                        "description": "Número de página",
+                        "type": "integer",
+                        "minimum": 1,
+                        "example": 1
+                    },
+                    "per_page": {
+                        "description": "Registros por página",
+                        "type": "integer",
+                        "maximum": 100,
+                        "minimum": 1,
+                        "example": 25
+                    }
+                },
+                "type": "object"
+            },
+            "LoginRequest": {
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "usuario@ejemplo.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "secret123"
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterRequest": {
+                "required": [
+                    "name",
+                    "email",
+                    "password",
+                    "password_confirmation"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Juan Pérez"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "juan@ejemplo.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "secret123"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "secret123"
+                    }
+                },
+                "type": "object"
+            },
+            "GradosTitulosResource": {
+                "title": "Grado o Título académico",
+                "description": "Registro ligado a un docente nombrado o contratado",
+                "properties": {
+                    "id": {
+                        "description": "------------------------------------------------------------------\n Esquema OpenAPI\n------------------------------------------------------------------",
+                        "type": "integer",
+                        "example": 101
+                    },
+                    "docente": {
+                        "description": "Datos mínimos del docente asociado",
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 42
+                            },
+                            "tipo": {
+                                "type": "string",
+                                "enum": [
+                                    "nombrado",
+                                    "contratado"
+                                ],
+                                "example": "nombrado"
+                            },
+                            "dni": {
+                                "type": "string",
+                                "example": "12345678"
+                            },
+                            "nombre_completo": {
+                                "type": "string",
+                                "example": "GARCÍA FLORES, ANA MARÍA"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "mayor_grado_academico": {
+                        "type": "string",
+                        "example": "Doctor"
+                    },
+                    "bachiller": {
+                        "type": "string",
+                        "example": "Bachiller en Física",
+                        "nullable": true
+                    },
+                    "universidad_bach": {
+                        "type": "string",
+                        "example": "UNPRG",
+                        "nullable": true
+                    },
+                    "pais_bach": {
+                        "type": "string",
+                        "example": "Perú",
+                        "nullable": true
+                    },
+                    "titulo": {
+                        "type": "string",
+                        "example": "Licenciado en Física",
+                        "nullable": true
+                    },
+                    "universidad_titu": {
+                        "type": "string",
+                        "example": "UNPRG",
+                        "nullable": true
+                    },
+                    "pais_titu": {
+                        "type": "string",
+                        "example": "Perú",
+                        "nullable": true
+                    },
+                    "resolucion_reconocimiento": {
+                        "type": "string",
+                        "example": "R‑2025‑001",
+                        "nullable": true
+                    },
+                    "maestria": {
+                        "type": "string",
+                        "example": "Magíster en Docencia",
+                        "nullable": true
+                    },
+                    "universidad_maes": {
+                        "type": "string",
+                        "example": "UNPRG",
+                        "nullable": true
+                    },
+                    "pais_maes": {
+                        "type": "string",
+                        "example": "Perú",
+                        "nullable": true
+                    },
+                    "doctorado": {
+                        "type": "string",
+                        "example": "Doctorado en Educación",
+                        "nullable": true
+                    },
+                    "universidad_doc": {
+                        "type": "string",
+                        "example": "PUCP",
+                        "nullable": true
+                    },
+                    "pais_doc": {
+                        "type": "string",
+                        "example": "Perú",
+                        "nullable": true
+                    },
+                    "segunda_especialidad": {
+                        "type": "string",
+                        "example": "Especialidad en Matemáticas",
+                        "nullable": true
+                    },
+                    "universidad_espe": {
+                        "type": "string",
+                        "example": "UNMSM",
+                        "nullable": true
+                    },
+                    "pais_espe": {
+                        "type": "string",
+                        "example": "Perú",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-24T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-07-25T09:30:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Juan Pérez"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "juan@ejemplo.com"
+                    },
+                    "email_verified": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-05-21T12:34:56Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-05-22T08:15:30Z"
+                    }
+                },
+                "type": "object"
+            },
+            "CicloAcademico": {
+                "required": [
+                    "anio",
+                    "semestre"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "example": 3
+                    },
+                    "anio": {
+                        "type": "integer",
+                        "example": 2025
+                    },
+                    "semestre": {
+                        "type": "string",
+                        "enum": [
+                            "I",
+                            "II"
+                        ],
+                        "example": "I"
+                    }
+                },
+                "type": "object"
+            },
+            "ContratoDocente": {
+                "required": [
+                    "docente_id",
+                    "ciclo_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "docente_id": {
+                        "type": "integer"
+                    },
+                    "ciclo_id": {
+                        "type": "integer"
+                    },
+                    "categoria": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "regimen_dedicacion": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "fecha_ingreso": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "fecha_fin": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "resolucion": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "facultad_id": {
+                        "type": "integer"
+                    },
+                    "programa_id": {
+                        "type": "integer"
+                    },
+                    "tipo_id": {
+                        "description": "FK a tipo_contrato_docente",
+                        "type": "integer",
+                        "nullable": true
+                    },
+                    "comentario": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            },
+            "DocenteContratado": {
+                "required": [
+                    "dni",
+                    "apellido_paterno",
+                    "apellido_materno",
+                    "nombres"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "example": 101
+                    },
+                    "dni": {
+                        "type": "string",
+                        "example": "42900502"
+                    },
+                    "apellido_paterno": {
+                        "type": "string",
+                        "example": "ALVA"
+                    },
+                    "apellido_materno": {
+                        "type": "string",
+                        "example": "ZAPATA"
+                    },
+                    "nombres": {
+                        "type": "string",
+                        "example": "JULIANA DEL PILAR"
+                    },
+                    "sexo": {
+                        "type": "string",
+                        "enum": [
+                            "M",
+                            "F",
+                            "X"
+                        ],
+                        "nullable": true
+                    },
+                    "mayor_grado_academico": {
+                        "type": "string",
+                        "example": "Maestro",
+                        "nullable": true
+                    },
+                    "correo": {
+                        "type": "string",
+                        "example": "juliana.alva@email.com",
+                        "nullable": true
+                    },
+                    "telefono": {
+                        "type": "string",
+                        "example": "987654321",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            },
+            "DocenteNombrado": {
+                "title": "Docente nombrado",
+                "description": "Modelo que representa a un docente ordinario nombrado",
+                "required": [
+                    "dni",
+                    "apellido_paterno",
+                    "apellido_materno",
+                    "nombres"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 42
+                    },
+                    "dni": {
+                        "description": "DNI de 8 dígitos",
+                        "type": "string",
+                        "example": "12345678"
+                    },
+                    "apellido_paterno": {
+                        "type": "string",
+                        "example": "García"
+                    },
+                    "apellido_materno": {
+                        "type": "string",
+                        "example": "Flores"
+                    },
+                    "nombres": {
+                        "type": "string",
+                        "example": "Ana María"
+                    },
+                    "mayor_grado_academico": {
+                        "type": "string",
+                        "example": "Magíster"
+                    },
+                    "categoria_id": {
+                        "description": "FK → categorias.id",
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": true
+                    },
+                    "regimen_id": {
+                        "description": "FK → regimenes.id",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "regimen_pensionario_id": {
+                        "description": "FK → regimenes_pensionarios.id",
+                        "type": "integer",
+                        "example": 3,
+                        "nullable": true
+                    },
+                    "facultad_id": {
+                        "description": "FK → facultades.id",
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": true
+                    },
+                    "anio_ingreso_unprg": {
+                        "type": "integer",
+                        "example": 2010,
+                        "nullable": true
+                    },
+                    "fecha_nacimiento": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1985-07-12",
+                        "nullable": true
+                    },
+                    "direccion": {
+                        "type": "string",
+                        "example": "Jr. Los Álamos 123 – Chiclayo",
+                        "nullable": true
+                    },
+                    "numero_celular": {
+                        "type": "string",
+                        "example": "987654321",
+                        "nullable": true
+                    },
+                    "correo_institucional": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "ana.garcia@unprg.edu.pe",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            },
+            "Facultad": {
+                "required": [
+                    "siglas"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
+                    "siglas": {
+                        "type": "string",
+                        "example": "FACFYM"
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "GradoTitulo": {
+                "title": "Grado o Título",
+                "description": "Registro académico ligado a un docente (nombrado o contratado)",
+                "required": [
+                    "mayor_grado_academico"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 101
+                    },
+                    "docente": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 42
+                            },
+                            "tipo": {
+                                "type": "string",
+                                "enum": [
+                                    "nombrado",
+                                    "contratado"
+                                ]
+                            },
+                            "dni": {
+                                "type": "string",
+                                "example": "12345678"
+                            },
+                            "nombre_completo": {
+                                "type": "string",
+                                "example": "GARCÍA FLORES, ANA MARÍA"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "mayor_grado_academico": {
+                        "type": "string",
+                        "example": "Doctor"
+                    },
+                    "titulo": {
+                        "type": "string",
+                        "example": "Licenciado en Física"
+                    },
+                    "maestria": {
+                        "type": "string",
+                        "example": "Magíster en Docencia"
+                    },
+                    "doctorado": {
+                        "type": "string",
+                        "example": "Doctorado en Educación"
+                    },
+                    "segunda_especialidad": {
+                        "type": "string",
+                        "example": "Especialidad en Matemáticas"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Programa": {
+                "required": [
+                    "facultad_id",
+                    "nombre"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true,
+                        "example": 17
+                    },
+                    "facultad_id": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Computación y Electrónica"
+                    },
+                    "siglas": {
+                        "type": "string",
+                        "example": "CYE",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "description": "Pega tu token así: Bearer {token}",
+                "name": "Authorization",
+                "in": "header",
+                "bearerFormat": "Bearer",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Operaciones de autenticación (registro, login, logout)"
+        },
+        {
+            "name": "DocentesContratados",
+            "description": "CRUD y carga masiva de docentes contratados"
+        },
+        {
+            "name": "Test",
+            "description": "API test endpoints"
+        },
+        {
+            "name": "Catálogos",
+            "description": "Catálogos"
+        },
+        {
+            "name": "Docentes Nombrados",
+            "description": "Docentes Nombrados"
+        },
+        {
+            "name": "GradosTitulos",
+            "description": "GradosTitulos"
+        }
+    ]
+}
